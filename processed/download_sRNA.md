@@ -1,5 +1,5 @@
 ```SraAccList.txt``` containing all 81 .sra files from PRJNA937774 on NCBI  
-```filenames.txt``` containing the correct naming  
+```sRNA_target_filenames.txt``` containing the correct names  
 
 ```prefetch --option-file ../SraAccList.txt``` to download all sRNA files  
 
