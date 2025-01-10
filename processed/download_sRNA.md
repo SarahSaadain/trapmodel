@@ -10,3 +10,5 @@ used arguments: ```raw/sra_files/ raw/ raw/SraAccList.txt raw/sRNA_target_filena
 
 remove .sra files from species folders  
 
+use ```move_ref_to_species_folder.py``` 
+to move ref files to correct species folder
