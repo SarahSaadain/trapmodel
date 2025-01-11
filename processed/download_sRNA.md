@@ -3,11 +3,9 @@
 
 use ```move_srr_to_species_folder.py```  
 to download all sra files from SraAccList.txt into the sra_files folder
-then move sRNA files to correct species folder, fasterq-dump to change .sra to .fastq, setk to change .fastq to .fasta  
+then move sRNA files to correct species folder, fasterq-dump to change .sra to .fastq, then remove .sra, setk to change .fastq to .fasta  
 execute from trapmodel folder with  
 ```python scripts/move_srr_to_species_folder.py raw/sra_files/ raw/ raw/SraAccList.txt raw/sRNA_target_filenames.txt```
-
-remove .sra files from species folders  
 
 use ```move_ref_to_species_folder.py``` 
 to move ref files to correct species folder
