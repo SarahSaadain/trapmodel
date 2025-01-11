@@ -9,3 +9,9 @@ execute from trapmodel folder with
 
 use ```move_ref_to_species_folder.py``` 
 to move ref files to correct species folder
+
+use ```adapter_remove.py``` 
+to remove adapters (execute in trapmodel folder)  
+
+use ```sed 's/U/T/g' hairpin.fa > hairpin_T.fa```to transform Uracils to Thymins  
+
