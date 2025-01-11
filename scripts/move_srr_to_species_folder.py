@@ -45,58 +45,63 @@ def move_sra_and_convert(sra_accession_list: list, srna_filenames_list: list, sr
 
     for sra_number in sra_accession_list:
         # Find the target file containing the source file name
-        target_file = next((t for t in srna_filenames_list if sra_number in t), None)
-        if not target_file:
+        srna_sra_filename = next((t for t in srna_filenames_list if sra_number in t), None)
+        if not srna_sra_filename:
             print(f"No matching target file found for source file: {sra_number}")
             continue
 
         # Parse the target file name to get folder and subfolder
-        parts = target_file.split("_")
+        parts = srna_sra_filename.split("_")
         if len(parts) < 3:
-            print(f"Invalid target file name format: {target_file}")
+            print(f"Invalid target file name format: {srna_sra_filename}")
             continue
 
-        folder = parts[0]  # First part as folder‚
+        species_folder = parts[0]  # First part as folder‚
         subfolder = parts[1]  # Second part as subfolder
 
         # Create folder and subfolder in the target directory
-        target_path = os.path.join(raw_folder, folder, "sRNA", subfolder)
-        os.makedirs(target_path, exist_ok=True)
+        srna_folder_path = os.path.join(raw_folder, species_folder, "sRNA", subfolder)
+        os.makedirs(srna_folder_path, exist_ok=True)
 
         # Move and rename the file
-        source_path = os.path.join(sra_folder,sra_number,sra_number+".sra")
-        new_file_path = os.path.join(target_path, target_file+".sra")
+        srr_file_in_srr_folder_path = os.path.join(sra_folder,sra_number,sra_number+".sra")
+        srr_file_in_srna_folder_path = os.path.join(srna_folder_path, srna_sra_filename+".sra")
 
-        if not os.path.exists(new_file_path):
-            if not os.path.isfile(source_path):
-                print(f"Source file not found: {source_path}")
+        srna_fastq_file_path = os.path.join(srna_folder_path, srna_sra_filename+".fastq")
+
+        if not os.path.exists(srna_fastq_file_path):
+            if not os.path.isfile(srr_file_in_srr_folder_path):
+                print(f"Source file not found: {srr_file_in_srr_folder_path}")
                 continue
 
-            shutil.copy(source_path, new_file_path)
-            print(f"Copied {source_path} to {new_file_path}")
+            shutil.copy(srr_file_in_srr_folder_path, srr_file_in_srna_folder_path)
+            print(f"Copied {srr_file_in_srr_folder_path} to {srr_file_in_srna_folder_path}")
         else:
             print(f"SRA {sra_number} file alredy copied -> SKIP")
 
         # Execute command on the target file
         try:
-            fastq_file_path = os.path.join(target_path, target_file+".fastq")
             
-            if not os.path.exists(fastq_file_path):
-                subprocess.run(["fasterq-dump", "--split-files", new_file_path, "--outdir", target_path], check=True)
-                print(f"Executed fasterq-dump for {target_file}.sra")
+            if not os.path.exists(srna_fastq_file_path):
+                subprocess.run(["fasterq-dump", "--split-files", srr_file_in_srna_folder_path, "--outdir", srna_folder_path], check=True)
+                print(f"Executed fasterq-dump for {srna_sra_filename}.sra")
             else: 
                 print(f"SRA {sra_number} file alredy converted to FASTQ -> SKIP")
 
             # Run seqtk to convert FASTQ to FASTA
-            fasta_file = os.path.join(target_path, f"{target_file}.fasta")
+            srna_fasta_file = os.path.join(srna_folder_path, f"{srna_sra_filename}.fasta")
 
-            if not os.path.exists(fasta_file):
-                subprocess.run(["seqtk", "seq", "-A", fastq_file_path], stdout=open(fasta_file, 'wb'), check=True)
-                print(f"Converted {target_file}.fastq to FASTA: {target_file}.fasta")
+            if not os.path.exists(srna_fasta_file):
+                subprocess.run(["seqtk", "seq", "-A", srna_fastq_file_path], stdout=open(srna_fasta_file, 'wb'), check=True)
+                print(f"Converted {srna_sra_filename}.fastq to FASTA: {srna_sra_filename}.fasta")
             else:
                 print(f"SRA {sra_number} file alredy converted to FASTA -> SKIP")
         except subprocess.CalledProcessError as e:
             print(f"Error executing fasterq-dump for {sra_folder}: {e}")
+
+
+        if os.path.exists(srna_fastq_file_path) and os.path.exists(srr_file_in_srna_folder_path):
+            os.remove(srr_file_in_srna_folder_path)
 
 def main():
     parser = argparse.ArgumentParser(description="Move and rename files based on source and target lists.")
