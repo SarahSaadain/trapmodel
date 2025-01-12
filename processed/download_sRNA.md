@@ -30,3 +30,10 @@ to map combined sRNA sequences to ref genomes
 
 use ```identify_piRNA_clusters.py```  
 to identify clusters using proTRAC  
+
+
+
+
+Hacks:   
+remove multiple files with wildcard:   
+```rm -v processed/*/sRNA/*combined.fq```
