@@ -1,3 +1,9 @@
+execute the whole pipeline by running ```trapmodel_pipeline.py``` 
+
+
+
+this pipeline does:  
+
 ```SraAccList.txt``` (not exiting anymore) containing all 81 .sra files from PRJNA937774 on NCBI and four FC from PRJNA264407 (SRR1617564, SRR1617561, SRR1617566, SRR1617565)  
 ```sRNA_target_filenames.txt``` containing the corresponding filenames  
 ```common_trapmodel_scripts.py``` contains common scripts and constants for other scripts below  
@@ -14,9 +20,7 @@ to move ref files to correct species folder
 use ```adapter_remove.py``` 
 to remove adapters (execute in trapmodel folder)  
 
-get hairpin.fa from https://www.mirbase.org/download/  
-
-use ```sed 's/U/T/g' hairpin.fa > hairpin_T.fa```to transform Uracils to Thymins  
+use ```prepare_miRNA_hairpin.py```to get hairpin.fa from https://www.mirbase.org/download/ and transform Uracils to Thymins  
 
 use ```remove_miRNA_sequences.py```  
 to remove miRNA from sRNA  
@@ -33,7 +37,7 @@ to map combined sRNA sequences to ref genomes
 use ```identify_piRNA_clusters.py```  
 to identify clusters using proTRAC  
 
-
+each script acceses ```common_trapmodel_scripts.py``` which contains all directories, files and commonly used functions  
 
 
 Hacks:   
