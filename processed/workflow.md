@@ -14,9 +14,9 @@ to move ref files to correct species folder
 use ```adapter_remove.py``` 
 to remove adapters (execute in trapmodel folder)  
 
-use ```sed 's/U/T/g' hairpin.fa > hairpin_T.fa```to transform Uracils to Thymins  
-
 get hairpin.fa from https://www.mirbase.org/download/  
+
+use ```sed 's/U/T/g' hairpin.fa > hairpin_T.fa```to transform Uracils to Thymins  
 
 use ```remove_miRNA_sequences.py```  
 to remove miRNA from sRNA  
