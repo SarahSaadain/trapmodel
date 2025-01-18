@@ -45,7 +45,8 @@ use ```convert_sam_to_bam```
 to convert to bam, sort and index the mapped sRNA files against the ref genome  
 
 use ```analyse_clusters``` 
-removes clusters < 35kb, 
+removes clusters < 35kb, adds columns with number of total sRNA sequences for ovary and FC, adds columns with number of sRNA sequences mapping to each cluster for ovary and FC  
+calculates CPM in ovary and FC, calculates ratio of ovary/FC  
 
 each script acceses ```common_trapmodel_scripts.py``` which contains all directories, files and commonly used functions  
 
