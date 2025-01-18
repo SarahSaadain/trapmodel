@@ -4,7 +4,7 @@ execute the whole pipeline by running ```trapmodel_pipeline.py```
 
 this pipeline does:  
 
-```SraAccList.txt``` (not exiting anymore) containing all 81 .sra files from PRJNA937774 on NCBI and four FC from PRJNA264407 (SRR1617564, SRR1617561, SRR1617566, SRR1617565)  
+```SraAccList.txt``` (not exiting anymore) containing all 81 .sra files from PRJNA937774 on NCBI
 ```sRNA_target_filenames.txt``` containing the corresponding filenames  
 ```common_trapmodel_scripts.py``` contains common scripts and constants for other scripts below  
 
