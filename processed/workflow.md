@@ -52,6 +52,8 @@ calculates CPM in ovary and FC, calculates ratio of ovary/FC
 ```combine_analyzed_clusters.py``` 
 creates a single list containing the outputs from analyze_clusters.py from each species  
 
+to get the exact reference genome length for the ref genomes (ref genomes that are not on NCBI don't have the exact values shown)  
+
 each script acceses ```common_trapmodel_scripts.py``` which contains all directories, files and commonly used functions  
 
 
