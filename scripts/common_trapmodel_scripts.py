@@ -1,6 +1,7 @@
 import os
 import re
 import subprocess
+import sys
 
 #####################
 # Constants
@@ -19,6 +20,8 @@ FOLDER_PROCESSED = "processed"
 FOLDER_MIRNA = "miRNA"
 FOLDER_MAPPED = "mapped"
 FOLDER_CLUSTERS = "clusters"
+FOLDER_CLUSTERS_MERGED = "clusters_merged"
+FOLDER_CLUSTERS_ANALYZED = "clusters_analyzed"
 FOLDER_ADAPTER_REMOVED = "adapter_removed"
 FOLDER_AUNDANT_REMOVED = "abundant_removed"
 FOLDER_MIRNA_REMOVED = "miRNA_removed"
@@ -37,9 +40,65 @@ PROGRAM_PATH_PROTRAC = "/home/vetlinux04/Sarah/softwares/proTRAC_2.4.4.pl"
 # files
 FILENAME_SRNA_FILENAME_LIST = "sRNA_target_filenames.txt"
 
+#sRNA Types
+SRNA_TYPE_OVARY = "ovary"
+SRNA_TYPE_FC = "fc"
+
 #####################
 # Helpers
 #####################
+
+
+def is_sam_file_sorted(sam_file):
+    try:
+        # Check the header for sorting status
+        result = subprocess.run(
+            ['samtools', 'view', '-H', sam_file],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+            check=True
+        )
+        for line in result.stdout.splitlines():
+            if line.startswith('@HD') and 'SO:coordinate' in line:
+                return True
+        return False
+    except subprocess.CalledProcessError as e:
+        print(f"Error reading header: {e}")
+        return False
+
+def convert_sam_to_bam(sam_file, bam_file, threads=20):
+
+    print_info(f"Converting SAM to BAM: {sam_file} -> {bam_file}")
+
+    try:
+
+        if is_sam_file_sorted(sam_file):
+            print(f"{sam_file} is already sorted. Skipping sorting step.")
+            # Convert directly to BAM if needed
+            subprocess.run(
+                ['samtools', 'view', '-bS', sam_file, '-o', bam_file],
+                check=True
+            )
+        else:
+            # Convert and sort SAM to BAM in one step
+            subprocess.run(
+                ['samtools', 'sort', '-@', str(threads), '-o', bam_file, sam_file],
+                check=True
+            )
+            print("SAM to BAM conversion and sorting completed.")
+
+        # Index the BAM file using samtools index with multiple threads
+        subprocess.run(
+            ['samtools', 'index', '-@', str(threads), bam_file], 
+            check=True, 
+            stderr=sys.stderr
+        )
+        
+        print(f"Conversion and indexing of {sam_file} completed successfully with {threads} threads.")
+
+    except subprocess.CalledProcessError as e:
+        print(f"Error occurred: {e}", file=sys.stderr)
 
 def get_sra_number_from_filename(filename):
 
@@ -139,6 +198,12 @@ def get_folder_path_processed_species_mapped(species):
 def get_folder_path_processed_species_clusters(species):
     return os.path.join(get_folder_path_processed_species(species), FOLDER_CLUSTERS)
 
+def get_folder_path_processed_species_clusters_merged(species):
+    return os.path.join(get_folder_path_processed_species(species), FOLDER_CLUSTERS_MERGED)
+
+def get_folder_path_processed_species_clusters_analyzed(species):
+    return os.path.join(get_folder_path_processed_species(species), FOLDER_CLUSTERS_ANALYZED)
+
 def get_folder_path_processed_species_sRNA(species):
     return os.path.join(get_folder_path_processed_species(species), FOLDER_SRNA)
 
@@ -181,3 +246,4 @@ def get_reference_genome_path_by_name(species, ref_genome_name):
 
     #if we reach this point, we did not find a ref genome -> Error
     raise RuntimeError(f"No reference genome found with name {ref_genome_name} for species {species}")
+
