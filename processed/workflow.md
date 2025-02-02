@@ -59,4 +59,7 @@ each script acceses ```common_trapmodel_scripts.py``` which contains all directo
 
 Hacks:   
 remove multiple files with wildcard:   
-```rm -v processed/*/sRNA/*combined.fq```
+```rm -v processed/*/sRNA/*combined.fq```  
+
+copy maintining folder structure
+```cp -r --parents D*/cluster* backup_SarahProtrac_LopikCluster/```
