@@ -65,9 +65,9 @@ to get the exact reference genome length for the ref genomes (ref genomes that a
 writes /process/determined_cluster_ratio.tsv  
 calculates the ratio for each cluster to determine if somatic or folicle cluster  
 
-#### Hacks:  
-remove multiple files with wildcard:   
+#### Hacks:   
 ```rm -v processed/*/sRNA/*combined.fq```  
+remove multiple files with wildcard  
 
-copy maintining folder structure
-```cp -r --parents D*/cluster* backup_SarahProtrac_LopikCluster/```
+```cp -r --parents D*/cluster* backup_SarahProtrac_LopikCluster/```  
+copy while maintining folder structure  
