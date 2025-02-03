@@ -69,7 +69,7 @@ def run_modified_pipeline():
 
 def main():
 
-    run_pipeline()
+    run_modified_pipeline()
 
 if __name__ == "__main__":
     main()

@@ -30,4 +30,5 @@ def get_protrac_settings(mapped_sRNA_file_path, reference_genome_file_path):
     
     return command_identify_clusters
 
+# Overwrite the function in the imported module
 identify_piRNA_clusters.get_protrac_settings = get_protrac_settings

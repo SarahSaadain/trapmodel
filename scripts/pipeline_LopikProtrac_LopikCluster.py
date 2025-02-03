@@ -8,7 +8,7 @@ def run_modified_pipeline():
 
     processed_folder = get_folder_path_processed()
     if os.path.exists(processed_folder):
-        print(f"Processed folder exists -> ABORT")
+        print_error(f"Processed folder exists -> ABORT")
         return
 
     # Specify the folder paths
@@ -19,9 +19,9 @@ def run_modified_pipeline():
     # processed_LopikProtrac_LopikCluster -> processed
     try:
         os.rename(processed_LopikProtrac_LopikCluster, processed_folder)
-        print(f"Folder renamed from '{processed_LopikProtrac_LopikCluster}' to '{processed_folder}'")
+        print_info(f"Folder renamed from '{processed_LopikProtrac_LopikCluster}' to '{processed_folder}'")
     except Exception as e:
-        print(f"Error: {e}")
+        print_error(f"Error: {e}")
         return
     
     #from trapmodel_pipeline
@@ -38,7 +38,7 @@ def run_modified_pipeline():
 
 def main():
 
-    run_pipeline()
+    run_modified_pipeline()
 
 if __name__ == "__main__":
     main()
