@@ -9,3 +9,5 @@
 /logfiles/
 /no_git/
 /results/
+.DS_Store
+.Rhistory
