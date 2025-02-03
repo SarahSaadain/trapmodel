@@ -70,5 +70,8 @@ calculates the ratio for each cluster to determine if somatic or folicle cluster
 ```rm -v processed/*/sRNA/*combined.fq```  
 remove multiple files with wildcard  
 
+```rm -v -r D*/clusters_*```  
+remove multiple folders with wildcard  
+
 ```cp -r --parents D*/cluster* backup_SarahProtrac_LopikCluster/```  
 copy while maintining folder structure  
