@@ -1,0 +1,52 @@
+ref_genome	length
+Dmoj_ref_GCA_018153725.1_ASM1815372v1_genomic	163,170,721 (same)
+Dmoj_ref_d15	20
+Dmoj_ref_GCF_018153725.1_ASM1815372v1_genomic	163,170,721 (same)
+Dmoj_ref_droMoj2	40
+Dmoj_ref_GCF_000005175.2_dmoj_caf1_genomic	193,826,310
+Dana_ref_GCA_018148915.1_ASM1814891v1_genomic	173,940,550
+Dana_ref_d15	70
+Dana_ref_droAna2	80
+Dana_ref_GCF_003285975.2_DanaRS2.1_genomic	217,108,776
+Dana_ref_GCF_017639315.1_ASM1763931v2_genomic	213,817,545
+Dazt_ref_GCA_005876895.1_DaztRS1_genomic	219.1 Mb
+Dbia_ref_GCA_018148935.1_ASM1814893v1_genomic	185,318,521 (same)
+Dbia_ref_GCF_018148935.1_ASM1814893v1_genomic	185,318,521 (same)
+Dbia_ref_d15	140
+Dbia_ref_GCF_000233415.1_Dbia_2.0_genomic	169,378,599
+Dfic_ref_GCA_018152265.1_ASM1815226v1_genomic	167,832,931	
+Dfic_ref_GCF_000220665.1_Dfic_2.0_genomic	152,439,475
+Dper_ref_GCA_018904465.1_ASM1890446v1_genomic	152,810,519
+Dper_ref_GCF_003286085.1_DperRS2_genomic	195,512,972
+Dper_ref_d15	200
+Dper_ref_droPer1	210
+Dpse_ref_GCA_018904455.1_ASM1890445v1_genomic	149,802,618
+Dpse_ref_d15	230
+Dpse_ref_GCF_009870125.1_UCI_Dpse_MV25_genomic	163,266,851
+Dpse_ref_dp3	250
+Dsim_ref_GCA_018904415.1_ASM1890441v1_genomic	133,569,011
+Dsim_ref_droSim1	270
+Dsim_ref_GCF_016746395.2_Prin_Dsim_3.1_genomic	131,663,590
+Dsim_ref_d15	290
+Dsub_ref_GCA_018903505.1_ASM1890350v1_genomic	136,896,320
+Dsub_ref_GCF_008121235.1_UCBerk_Dsub_1.0_genomic	126,232,139
+Dsuz_ref_GCA_013340165.1_LBDM_Dsuz_2.1.pri_genomic	268 Mb
+Dsuz_ref_GCF_000472105.1_Dsuzukii.v01_genomic	232,923,092
+Dtak_ref_GCA_018152695.1_ASM1815269v1_genomic	165,528,346	(same)
+Dtak_ref_GCF_018152695.1_ASM1815269v1_genomic	165,528,346 (same)
+Dtak_ref_GCF_000224235.1_Dtak_2.0_genomic	182,106,768
+Dere_ref_GCA_018904525.1_ASM1890452v1_genomic	135,657,613
+Dere_ref_GCF_003286155.1_DereRS2_genomic	146,538,397
+Dere_ref_d15	390
+Dere_ref_droEre1	400
+Dmel_ref_GCA_018904365.1_ASM1890436v1_genomic	144,706,421
+Dmel_ref_dm6	420
+Dvir_ref_GCA_018153695.1_ASM1815369v1_genomic	168,156,934
+Dvir_ref_d15	440
+Dvir_ref_GCF_003285735.1_DvirRS2_genomic	189,402,274
+Dvir_ref_droVir2	460
+Dyak_ref_GCA_018904385.1_ASM1890438v1_genomic	151,310,448
+Dyak_ref_GCF_016746365.2_Prin_Dyak_Tai18E2_2.1_genomic	147,883,098
+Dyak_ref_d15	490
+Dyak_ref_GCF_000005975.2_dyak_caf1_genomic	165,693,946
+Dyak_ref_droYak2	510
