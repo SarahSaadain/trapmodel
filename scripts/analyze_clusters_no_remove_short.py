@@ -27,7 +27,7 @@ def get_dataframe_for_merged_custer_gtf(merged_cluster_gtf_file_path):
     df["passed"] = df["passed"].astype(bool)
 
     # only keep clusters that passed (passed = True)
-    df = df[df["passed"]]
+    #df = df[df["passed"]]
 
     if df.empty:
         return df

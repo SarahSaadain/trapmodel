@@ -3,12 +3,14 @@ import subprocess
 import re
 from common_trapmodel_scripts import *
 
+def remove_miRNA_sequences():
 
-def run_bowtie(raw_folder, processed_folder):
+    raw_folder = get_folder_path_raw()
+    processed_folder = get_folder_path_processed()
 
     print("Extract sRNA and remove miRNA using bowtie")
 
-    hairpin_index_path = os.path.join(raw_folder, FOLDER_RESSOURCES, FOLDER_MIRNA, "hairpin_T")
+    hairpin_index_path = os.path.join(get_folder_path_raw_ressoures(), FOLDER_MIRNA, "hairpin_T")
     hairpin_file_path = hairpin_index_path +".fa"
 
     if not os.path.exists(hairpin_file_path):
@@ -21,12 +23,10 @@ def run_bowtie(raw_folder, processed_folder):
         if not is_species_folder(processed_species_folder_name):
             continue
 
-        processed_species_folder_path = os.path.join(processed_folder, processed_species_folder_name)
-
         # Iterate over sRNA types (ovary, FC)
         for sRNA_type in [FOLDER_OVARY, FOLDER_FOLICLE_CELLS]:
             
-            processed_sRNA_folder_path = os.path.join(processed_species_folder_path, FOLDER_SRNA, sRNA_type)
+            processed_sRNA_folder_path = get_folder_path_processed_species_sRNA_type(processed_species_folder_name, sRNA_type)
 
             if not os.path.exists(processed_sRNA_folder_path):
                 print_error(f"Folder {sRNA_type} missing for {processed_sRNA_folder_path}")
@@ -50,13 +50,12 @@ def run_bowtie(raw_folder, processed_folder):
 
                 adapter_removed_fq_file_path = os.path.join(processed_sRNA_adapter_removed_folder_path, adapter_removed_fq_file_name)
             
-
                 miRNA_folder_path = os.path.join(processed_sRNA_folder_path, FOLDER_MIRNA_REMOVED)
                 os.makedirs(miRNA_folder_path, exist_ok=True)
                 
                 miRNA_free_sRNA_fq_file_path = os.path.join(miRNA_folder_path, base_name_for_miRNA_file+"_miRNA_free_sRNA.fq")
                 miRNA_mapped_fq_file_path = os.path.join(miRNA_folder_path, base_name_for_miRNA_file+"_miRNA_mapped.fq")
-                miRNA_mapped_sam_file_path = os.path.join(miRNA_folder_path, base_name_for_miRNA_file+"miRNA_mapped.sam")
+                miRNA_mapped_sam_file_path = os.path.join(miRNA_folder_path, base_name_for_miRNA_file+"_miRNA_mapped.sam")
 
                 # Skip if miRNA_free_sRNA_fq_file already exists
                 if os.path.exists(miRNA_free_sRNA_fq_file_path):
@@ -90,20 +89,14 @@ def run_bowtie(raw_folder, processed_folder):
                     print_error(f"Bowtie - {adapter_removed_fq_file_name}: {e}")
                     continue
 
+                if os.path.exists(miRNA_mapped_sam_file_path):
+                    os.remove(miRNA_mapped_sam_file_path)
+                    print_info(f"SAM file removed: {miRNA_mapped_sam_file_path}")
 
 
-def process_files():
+def main():
 
-    current_directory = os.getcwd()
-    raw_folder = os.path.join(current_directory, FOLDER_RAW)
-    processed_folder = os.path.join(current_directory, FOLDER_PROCESSED)
-
-    # Check if current folder contains 'raw' and 'processed' directories
-    if not os.path.exists(raw_folder) or not os.path.exists(processed_folder):
-        print("Error: 'raw' and/or 'processed' directories are missing in the current folder. Wrong folder?")
-        return
-    
-    run_bowtie(raw_folder, processed_folder)
+    remove_miRNA_sequences()
 
 if __name__ == "__main__":
-    process_files()
+    main()

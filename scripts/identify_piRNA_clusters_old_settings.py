@@ -40,18 +40,18 @@ def run_protrac_to_identify_clusters(species, mapped_sRNA_file_path, reference_g
         "-map", mapped_sRNA_file_path,
         "-format", "SAM",
         "-genome", reference_genome_file_path,
-        "-pdens", "0.01", 
-        "-swincr", "100", 
-        "-swsize", "1000", 
-        "-clsize", "5000", 
-        "-1Tor10A", "0.75", 
-        "-clstrand", "0.5", 
-        "-pimin", "23", 
-        "-pimax", "30", 
-        "-pisize", "0.75", 
-        "-distr", "1-99", 
+        "-pdens", "0.2", # this is what I used previously
+        #"-swincr", "100", # that is from Lopik 
+        #"-swsize", "1000", # that is from Lopik 
+        "-clsize", "1000", # Lopik used 5000, I use 1000
+        #"-1Tor10A", "0.75", # that is from Lopik 
+        #"-clstrand", "0.5", # that is from Lopik 
+        #"-pimin", "23", # that is from Lopik 
+        #"-pimax", "30", # that is from Lopik 
+        #"-pisize", "0.75", # that is from Lopik 
+        #"-distr", "1-99", # that is from Lopik
         "-nomotif",
-        "-image"
+        #"-image"
     ]
 
     species_cluster_folder_path = get_folder_path_processed_species_clusters(species)

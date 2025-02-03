@@ -26,9 +26,14 @@ def convert_hairpin_U_T(hairpin_U_path, hairpin_T_path):
     # Open and process the file
     with open(hairpin_U_path, "r") as infile, open(hairpin_T_path, "w") as outfile:
         for line in infile:
-            if line.startswith(">"):  # Header line
+            if line.startswith(">") :  # Header line
+                #if "Drosophila" in line:
+                #    drosicheck = True
                 outfile.write(line)
+                #else:
+                #    drosicheck = False
             else:  # Sequence line
+                #if drosicheck == True:
                 outfile.write(line.replace("U", "T"))
 
 

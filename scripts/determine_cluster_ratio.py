@@ -3,38 +3,34 @@ import pandas as pd
 # import all functions of the common library using *
 from common_trapmodel_scripts import * 
 
-def combine_analyzed_clusters_for_species(species):
-        
-        clusters_analyzed_folder = get_folder_path_processed_species_clusters_analyzed(species)
+ref_genome_length_buffer = {}
 
-        if not os.path.exists(clusters_analyzed_folder):
-            print_error(f"Analyzed clusters missing: {clusters_analyzed_folder}")
-            return
+def get_length_by_ref_genome(ref_genome_name):
 
-        combined_clusters_file_path = os.path.join(get_folder_path_processed(), "combined_clusters.tsv")
-        uncombined_df_list = []
-    
-        # Iterate over analyzed cluster files
-        for analyzed_ref_genome_clusters_file in os.listdir(clusters_analyzed_folder):
+    # fill buffer is empty
+    if  len(ref_genome_length_buffer) == 0:
 
-            analyzed_ref_genome_clusters_file_path = os.path.join(clusters_analyzed_folder, analyzed_ref_genome_clusters_file)
-            
-            print(f"Processing {analyzed_ref_genome_clusters_file_path} ...")
+        file_with_lengths = os.path.join(get_folder_path_raw_ressoures(), "ref_genome_lengths.tsv")
 
-            df = pd.read_csv(analyzed_ref_genome_clusters_file_path, sep="\t")
+        with open(file_with_lengths, 'r') as file:
+            next(file)  # Skip the header line
+            for line in file:
+                ref_genome, length = line.strip().split('\t')
+                ref_genome_length_buffer[ref_genome] = int(length)
 
-            uncombined_df_list.append(df)
+    return ref_genome_length_buffer.get(ref_genome_name, None)
 
-        print(f"Combining into {combined_clusters_file_path} ...")
+def compute_reads(row):
 
-        if os.path.exists(combined_clusters_file_path):
-            # in case the file is already presen (from processing previous species)
-            # -> Add it to the combining step
-            df = pd.read_csv(combined_clusters_file_path, sep="\t")
-            uncombined_df_list.insert(0, df)
+    reference_genome_name = row["ref_genome"]
+    cluster_length = row["cluster_length_sum"]
 
-        combined_df = pd.concat(uncombined_df_list, ignore_index=True)
-        combined_df.to_csv(combined_clusters_file_path, sep="\t", index=False, )
+    length = get_length_by_ref_genome(reference_genome_name)
+
+    cluster_ratio = cluster_length / length 
+
+    return pd.Series([length, cluster_ratio])
+
 
 def determine_cluster_ratio():
 
@@ -54,13 +50,17 @@ def determine_cluster_ratio():
 
     df = pd.read_csv(combined_clusters_file_path, sep="\t")
 
+    #drop some columns as we do not need them (cant be used)
     df = df.drop(columns=["start","end","is_cluster_in_ovary","is_cluster_in_fc","passed","cpm_ovary","cpm_fc","ovary_fc_factor"])
 
+    # Count the occurrences of each ref_genome and put in separate DF -> Merge after grouping
+    ref_genome_count_df = df.groupby('ref_genome').size().reset_index(name='no_of_clusters')
+
+
     cluster_ratio_df = (
-        df.groupby('ref_genome',as_index=False)
+        df.groupby('ref_genome', as_index=False)
             .agg({
-                    "length":"sum",
-                    "ref_genome_length":"max",
+                    "length":["sum", "mean"],
                     "total_reads_ovary":"max",
                     "total_reads_fc":"max",
                     "total_reads_cluster_ovary":"sum",
@@ -68,7 +68,28 @@ def determine_cluster_ratio():
                 })
         )
 
-    cluster_ratio_df.to_csv(cluster_ratio_determined_file_path, sep="\t", index=False, )
+    # Flatten the MultiIndex columns if you want to avoid the nested structure
+    # need this for lenghts -> length_sum & length_mean
+    cluster_ratio_df.columns = [
+        col[0] if len(col) == 1 else '_'.join(col).strip() 
+        for col in cluster_ratio_df.columns
+    ]
+
+    # rename columns
+    cluster_ratio_df.rename(columns={"ref_genome_": "ref_genome"}, inplace=True)
+    cluster_ratio_df.rename(columns={"length_sum": "cluster_length_sum"}, inplace=True)
+    cluster_ratio_df.rename(columns={"length_mean": "cluster_length_mean"}, inplace=True)
+    
+    # calculate cluster ratio in ref_genome
+    cluster_ratio_df[['ref_genome_length', 'cluster_ratio']] = cluster_ratio_df.apply(compute_reads, axis=1)
+
+    # Merge the counts into the aggregated DataFrame
+    cluster_ratio_df = cluster_ratio_df.merge(ref_genome_count_df, on='ref_genome')
+
+
+    cluster_ratio_df.to_csv(cluster_ratio_determined_file_path, sep="\t", index=False )
+
+    print_success(f"Saved to {cluster_ratio_determined_file_path}")
 
                 
 
