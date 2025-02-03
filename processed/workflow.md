@@ -1,8 +1,13 @@
-execute the whole pipeline by running ```trapmodel_pipeline.py``` 
+# main script
+```trapmodel_pipeline.py```  
+executes the whole pipeline with all scripts  
+scripts can also be run separately  
 
+# common features  
+```common_trapmodel_scripts.py``` 
+which contains all directories, files and commonly used functions  
 
-
-this pipeline does:  
+# subscripts    
 
 ```SraAccList.txt``` (not exiting anymore) containing all 81 .sra files from PRJNA937774 on NCBI
 ```sRNA_target_filenames.txt``` containing the corresponding filenames  
@@ -52,12 +57,15 @@ calculates CPM in ovary and FC, calculates ratio of ovary/FC
 ```combine_analyzed_clusters.py``` 
 creates a single list containing the outputs from analyze_clusters.py from each species  
 
+```calculate_ref_genome_lengths.py```   
+writes /raw/ressources/ref_genome_lengths.tsv  
 to get the exact reference genome length for the ref genomes (ref genomes that are not on NCBI don't have the exact values shown)  
 
-each script acceses ```common_trapmodel_scripts.py``` which contains all directories, files and commonly used functions  
+```determine_cluster_ratio.py```  
+writes /process/determined_cluster_ratio.tsv  
+calculates the ratio for each cluster to determine if somatic or folicle cluster  
 
-
-Hacks:   
+# Hacks:  
 remove multiple files with wildcard:   
 ```rm -v processed/*/sRNA/*combined.fq```  
 
