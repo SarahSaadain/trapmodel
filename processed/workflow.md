@@ -1,13 +1,13 @@
-#### main script
+### main script
 ```trapmodel_pipeline.py```  
 executes the whole pipeline with all scripts  
 scripts can also be run separately  
 
-##### common features  
+#### common features  
 ```common_trapmodel_scripts.py``` 
 which contains all directories, files and commonly used functions  
 
-##### subscripts    
+#### subscripts    
 
 ```SraAccList.txt```(not exiting anymore)  
 containing all 81 .sra files from PRJNA937774 on NCBI  
