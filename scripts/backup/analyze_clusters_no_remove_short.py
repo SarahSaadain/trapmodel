@@ -109,7 +109,7 @@ def compute_reads(row):
     total_reads_ovary_mapped, total_reads_ovary_unmapped = count_bam_file_total_reads(ovary_mapped_file_path)
     total_reads_cluster_ovary = count_bam_file_region_reads(ovary_mapped_file_path, cluster_chromosome, cluster_start, cluster_end)
     
-    cpm_ovary = total_reads_cluster_ovary * 1_000_000 / total_reads_ovary_mapped
+    cpm_ovary = total_reads_cluster_ovary * 1_000_000 /  total_reads_ovary_mapped
 
     fc_mapped_file_path = os.path.join(get_folder_path_processed_species_mapped(species), reference_genome_name+"_FC_mapped.bam")
     
@@ -126,7 +126,7 @@ def compute_reads(row):
         
         cpm_fc = total_reads_cluster_fc * 1_000_000 / total_reads_fc_mapped
         
-        soma_fc_factor = cpm_ovary / cpm_fc
+        soma_fc_factor =  cpm_fc / cpm_ovary
 
     return pd.Series([total_reads_ovary_mapped, total_reads_fc_mapped, total_reads_cluster_ovary, total_reads_cluster_fc, cpm_ovary, cpm_fc, soma_fc_factor])
 
@@ -156,7 +156,16 @@ def analyze_cluster_report(species, merged_cluster_file_name):
 
     df_merged_clusters[['total_reads_ovary', 'total_reads_fc', 'total_reads_cluster_ovary', 'total_reads_cluster_fc', 'cpm_ovary', 'cpm_fc', 'ovary_fc_factor']] = df_merged_clusters.apply(compute_reads, axis=1)
 
-    df_merged_clusters.to_csv(analyzed_cluster_file_path, sep="\t", index=False, header=True)
+    #For the integer fields, you can convert them from float to integer so they won’t show the trailing “.0”. 
+    cols_int = ['total_reads_ovary', 'total_reads_fc', 'total_reads_cluster_ovary', 'total_reads_cluster_fc']
+    df_merged_clusters[cols_int] = df_merged_clusters[cols_int].astype('Int64')  # or 'int' if you’re sure there are no missing values
+
+     # Round the desired columns to 4 decimal places
+    df_merged_clusters[['cpm_ovary', 'cpm_fc', 'ovary_fc_factor']] = df_merged_clusters[['cpm_ovary', 'cpm_fc', 'ovary_fc_factor']].round(4)
+
+    #You can pass a formatting string to to_csv using the float_format parameter.
+    #This tells Pandas to use a “printf‐style” format which won’t insert any thousand separators.
+    df_merged_clusters.to_csv(analyzed_cluster_file_path, sep="\t", index=False, header=True, float_format="%.15g")
 
     print_success(f"Merged clusters saved to {analyzed_cluster_file_path}")
 

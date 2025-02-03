@@ -34,6 +34,20 @@ def run_protrac_to_identify_clusters(species, mapped_sRNA_file_path, reference_g
     # -nomotif     
     # -image
         
+    command_identify_clusters = get_protrac_settings(mapped_sRNA_file_path, reference_genome_file_path)
+
+    species_cluster_folder_path = get_folder_path_processed_species_clusters(species)
+    os.makedirs(species_cluster_folder_path, exist_ok=True)
+
+    try:
+        subprocess.run(command_identify_clusters, cwd=species_cluster_folder_path, check=True)
+        print_success(f"Protrac executed -> {mapped_sRNA_file_path}")
+        #print_command(command_identify_clusters)
+    except subprocess.CalledProcessError as e:
+        #print_command(command_identify_clusters)
+        print_error(f"Protrac error for file {mapped_sRNA_file_path} and {reference_genome_file_path}: {e}")
+
+def get_protrac_settings(mapped_sRNA_file_path, reference_genome_file_path):
     command_identify_clusters = [
         "perl", 
         PROGRAM_PATH_PROTRAC,
@@ -53,17 +67,8 @@ def run_protrac_to_identify_clusters(species, mapped_sRNA_file_path, reference_g
         "-nomotif",
         "-image"
     ]
-
-    species_cluster_folder_path = get_folder_path_processed_species_clusters(species)
-    os.makedirs(species_cluster_folder_path, exist_ok=True)
-
-    try:
-        subprocess.run(command_identify_clusters, cwd=species_cluster_folder_path, check=True)
-        print_success(f"Protrac executed -> {mapped_sRNA_file_path}")
-        #print_command(command_identify_clusters)
-    except subprocess.CalledProcessError as e:
-        #print_command(command_identify_clusters)
-        print_error(f"Protrac error for file {mapped_sRNA_file_path} and {reference_genome_file_path}: {e}")
+    
+    return command_identify_clusters
 
 def is_cluster_data_created(species, mapped_sRNA_to_ref_file_name):
 
