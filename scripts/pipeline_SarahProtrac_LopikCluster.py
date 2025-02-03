@@ -6,6 +6,7 @@ from merge_clusters import MIN_CLUSTER_SIZE
 
 # overwrite from identify_piRNA_clusters to use different protrac settings
 def get_protrac_settings(mapped_sRNA_file_path, reference_genome_file_path):
+    print_info("Overwrite protrac settings")
     command_identify_clusters = [
         "perl", 
         PROGRAM_PATH_PROTRAC,

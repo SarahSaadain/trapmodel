@@ -7,6 +7,8 @@ from merge_clusters import MIN_CLUSTER_SIZE
 # overwrite from merge_clusters
 def merge_clusters_of_dataframe(dataframe):
 
+    print_info("Overwrite merge_clusters_of_dataframe() to not merge clusters")
+
      # Sort the dataframe by chromosome and start position
     dataframe = dataframe.sort_values(by=["chromosome", "start"]).reset_index(drop=True)
 
@@ -46,11 +48,13 @@ def merge_clusters_of_dataframe(dataframe):
 
 # overwrite from analyze_clusters to prevent removing short clusters
 def filter_dataframe(df):
+    print_info("Overwrite filter DF to not remove short clusters")
    #return df[df["passed"]]
     return df
 
 # overwrite from identify_piRNA_clusters to use different protrac settings
 def get_protrac_settings(mapped_sRNA_file_path, reference_genome_file_path):
+    print_info("Overwrite protrac settings")
     command_identify_clusters = [
         "perl", 
         PROGRAM_PATH_PROTRAC,
