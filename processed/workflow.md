@@ -75,3 +75,9 @@ remove multiple folders with wildcard
 
 ```cp -r --parents D*/cluster* backup_SarahProtrac_LopikCluster/```  
 copy while maintining folder structure  
+
+```sudo pmset -b sleep 0; sudo pmset -b disablesleep 1```  
+disable sleep while running simulations locally  
+
+```sudo pmset -b sleep 5; sudo pmset -b disablesleep 0````  
+turn back to normal settings  
