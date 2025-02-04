@@ -8,7 +8,7 @@ from remove_miRNA_sequences import remove_miRNA_sequences
 from combine_miRNA_free_sequences_per_sRNA_type import combine_sRNA_sequences
 from map_sRNA_to_ref_genome import map_sRNA_to_reference_genome
 from identify_piRNA_clusters import identify_clusters
-from merge_clusters import merge_clusters
+from merge_clusters import merge_clusters, MAX_MERGING_DISTANCE, MIN_CLUSTER_SIZE
 from analyze_clusters import analyze_clusters
 from convert_mapped_sam_to_bam import convert_mapped_sam_to_bam
 from combine_analyzed_clusters import combine_analyzed_clusters
@@ -86,22 +86,31 @@ def run_pipeline():
     # Step 7: Identify clusters using proTRAC
     # in: /process/<species>/mapped from map_sRNA_to_reference_genome()
     # out: /process/<species>/clusters
-    identify_clusters()
+    identify_clusters(cluster_set="clusters_Lopik")
+    identify_clusters(cluster_set="clusters_Set1")
 
     # Step 8: Merge clusters
     # in: /process/<species>/clusters from identify_clusters()
     # out: /process/<species>/clusters_merged/*
-    merge_clusters()
+    merge_clusters(cluster_set="clusters_Lopik", merge_clusters=True, maximum_merging_distance=MAX_MERGING_DISTANCE, mark_passed_if_longer_than=MIN_CLUSTER_SIZE)
+    #merge_clusters(cluster_set="clusters_Lopik", merge_clusters=False, maximum_merging_distance=MAX_MERGING_DISTANCE, mark_passed_if_longer_than=MIN_CLUSTER_SIZE)
+    merge_clusters(cluster_set="clusters_Set1", merge_clusters=True, maximum_merging_distance=MAX_MERGING_DISTANCE, mark_passed_if_longer_than=MIN_CLUSTER_SIZE)
+    merge_clusters(cluster_set="clusters_Set1", merge_clusters=False, maximum_merging_distance=MAX_MERGING_DISTANCE, mark_passed_if_longer_than=MIN_CLUSTER_SIZE)
 
     # Step 9: Analyze clusters
     # in: /process/<species>/clusters_merged/* from merge_clusters()
     # out: /process/<species>/clusters_analyzed/*
-    analyze_clusters()
+    analyze_clusters(cluster_set="clusters_Lopik", remove_clusters_not_passed=True)
+    #analyze_clusters(cluster_set="clusters_Lopik", remove_clusters_not_passed=False)
+    analyze_clusters(cluster_set="clusters_Set1", remove_clusters_not_passed=True)
+    analyze_clusters(cluster_set="clusters_Set1", remove_clusters_not_passed=False)
+
 
     # Step 10: Combine analyzed clusters
     # in: /process/<species>/clusters_analyzed/* from analyze_clusters()
-    # out: /process/combined_clusters.tsv
-    combine_analyzed_clusters()
+    # out: /process/<cluster_set>_merged.tsv and/or /process/<cluster_set>_unmerged.tsv
+    combine_analyzed_clusters(cluster_set="clusters_Lopik")
+    combine_analyzed_clusters(cluster_set="clusters_Set1")
 
     # Step 11: Determine cluster ratio for each reference genome
     # in: /process/combined_clusters.tsv from  combine_analyzed_clusters()

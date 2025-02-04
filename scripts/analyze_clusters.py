@@ -2,24 +2,24 @@ import os
 import subprocess
 import pandas as pd
 import pysam
+import re
+
 
 from common_trapmodel_scripts import *
 
-NUMBER_OF_THREADS_FOR_PROCESSING = 10
+NUMBER_OF_THREADS_FOR_PROCESSING = 15
 
 
 # Initialize a cache for storing total counts
 total_read_buffer = {}
 
-def filter_dataframe(df):
-    return df[df["passed"]]
 
-def get_dataframe_for_merged_custer_gtf(merged_cluster_gtf_file_path):
+def get_dataframe_for_merged_custer_gtf(merged_cluster_gtf_file_path, remove_clusters_not_passed):
 
     df = pd.read_csv(merged_cluster_gtf_file_path, sep="\t")
 
     merged_cluster_gtf_file_name = os.path.basename(merged_cluster_gtf_file_path)
-    reference_gemone_name = merged_cluster_gtf_file_name.replace("_merged.gtf","").replace("proTRAC_","")
+    reference_gemone_name = merged_cluster_gtf_file_name.replace("proTRAC_","")
     
     # Convert columns
     df["start"] = df["start"].astype(int)
@@ -30,18 +30,19 @@ def get_dataframe_for_merged_custer_gtf(merged_cluster_gtf_file_path):
     df["passed"] = df["passed"].astype(bool)
 
     # only keep clusters that passed (passed = True)
-    df = filter_dataframe(df)
+    if remove_clusters_not_passed == True:
+        df = df[df["passed"]]
 
     if df.empty:
         return df
 
-    df["ref_genome"] = reference_gemone_name
+    df["ref_genome"] = re.sub(r"_clusters_.*_(un)?merged.gtf$", "", reference_gemone_name)
    
     return df
 
 def count_bam_file_total_reads(bam_file_path) -> tuple[int, int]: 
 
-    print(f"Processing total reads of BAM file: {bam_file_path}")
+    print_info(f"Processing total reads of BAM file: {bam_file_path}")
 
     if not os.path.exists(bam_file_path):
         raise FileNotFoundError(f"BAM file {bam_file_path} does not exist!")
@@ -94,7 +95,7 @@ def count_bam_file_region_reads(bam_file_path, reference, start, end) -> int:
         # Parse and return the count
         return int(result.stdout.strip())
     except subprocess.CalledProcessError as e:
-        print(f"Error counting mapped reads: {e}")
+        print_error(f"Error counting mapped reads: {e}")
         return None
    
     return region_mapped_count
@@ -134,15 +135,17 @@ def compute_reads(row):
     return pd.Series([total_reads_ovary_mapped, total_reads_fc_mapped, total_reads_cluster_ovary, total_reads_cluster_fc, cpm_ovary, cpm_fc, soma_fc_factor])
 
 
-def analyze_cluster_report(species, merged_cluster_file_name):
+def analyze_cluster_report(species,cluster_set, merged_cluster_file_name, remove_clusters_not_passed: bool):
 
-    clusters_merged_folder_path =  get_folder_path_processed_species_clusters_merged(species)
+    clusters_merged_folder_path =  get_folder_path_processed_species_clusters_merged(species,cluster_set)
     merged_cluster_file_path = os.path.join(clusters_merged_folder_path, merged_cluster_file_name)
 
-    clusters_analyzed_folder = get_folder_path_processed_species_clusters_analyzed(species)
+    clusters_analyzed_folder = get_folder_path_processed_species_clusters_analyzed(species,cluster_set)
     os.makedirs(clusters_analyzed_folder, exist_ok=True)
 
-    analyzed_cluster_file_path = os.path.join(clusters_analyzed_folder, merged_cluster_file_name.replace("merged.gtf","analyzed.gtf"))
+    remove_clusters_35kb = "gt35kb" if remove_clusters_not_passed else "all"
+
+    analyzed_cluster_file_path = os.path.join(clusters_analyzed_folder, merged_cluster_file_name.replace(".gtf",f"_{remove_clusters_35kb}.gtf"))
 
     if os.path.exists(analyzed_cluster_file_path):
         print_info(f"Analyzed cluster already created {analyzed_cluster_file_path} -> SKIP")
@@ -150,7 +153,7 @@ def analyze_cluster_report(species, merged_cluster_file_name):
 
     print_info(f"Analyzing {merged_cluster_file_name}")
 
-    df_merged_clusters = get_dataframe_for_merged_custer_gtf(merged_cluster_file_path)
+    df_merged_clusters = get_dataframe_for_merged_custer_gtf(merged_cluster_file_path, remove_clusters_not_passed)
 
     if df_merged_clusters.empty:
         print_info(f"No clusters passed for further analysis ({merged_cluster_file_name})")
@@ -173,27 +176,23 @@ def analyze_cluster_report(species, merged_cluster_file_name):
     print_success(f"Merged clusters saved to {analyzed_cluster_file_path}")
 
 
-def analyze_clusters_for_species(species):
+def analyze_clusters_for_species(species, cluster_set, remove_clusters_not_passed):
 
-    clusters_merged_folder_path =  get_folder_path_processed_species_clusters_merged(species)
+    clusters_merged_folder_path =  get_folder_path_processed_species_clusters_merged(species, cluster_set)
 
     if not os.path.exists(clusters_merged_folder_path):
         print_error(f"Folder {clusters_merged_folder_path} does not exist")
         return
 
     for merged_cluster_file_name in os.listdir(clusters_merged_folder_path):
+        if merged_cluster_file_name.endswith("_merged.gtf") or merged_cluster_file_name.endswith("_unmerged.gtf") :
+            analyze_cluster_report(species,cluster_set, merged_cluster_file_name, remove_clusters_not_passed)
 
-        if not merged_cluster_file_name.endswith("merged.gtf"):
-            continue
-
-        analyze_cluster_report(species, merged_cluster_file_name)
-
-def analyze_clusters():
+def analyze_clusters(cluster_set:str,remove_clusters_not_passed: bool = True):
 
     print(f"Analyzing clusters")
 
-    #analyze_clusters_for_species("Dmel")
-    #return
+    print_info(f"Removing short clusters: {str(remove_clusters_not_passed)}")
 
     # Iterate over species folders in the raw directory
     for processed_species_folder_name in os.listdir(get_folder_path_processed()):
@@ -201,12 +200,14 @@ def analyze_clusters():
         if not is_species_folder(processed_species_folder_name):
             continue
 
-        analyze_clusters_for_species(processed_species_folder_name)
+        species = processed_species_folder_name
+
+        analyze_clusters_for_species(species, cluster_set, remove_clusters_not_passed)
 
 
-def main():
+# def main():
 
-    analyze_clusters()
+#     analyze_clusters()
 
-if __name__ == "__main__":
-    main()
+# if __name__ == "__main__":
+#     main()

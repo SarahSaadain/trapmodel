@@ -19,9 +19,9 @@ FOLDER_RESSOURCES = "ressources"
 FOLDER_PROCESSED = "processed"
 FOLDER_MIRNA = "miRNA"
 FOLDER_MAPPED = "mapped"
-FOLDER_CLUSTERS = "clusters"
-FOLDER_CLUSTERS_MERGED = "clusters_merged"
-FOLDER_CLUSTERS_ANALYZED = "clusters_analyzed"
+FOLDER_CLUSTERS_PROTRAC = "proTRAC"
+FOLDER_CLUSTERS_MERGED = "merged"
+FOLDER_CLUSTERS_ANALYZED = "analyzed"
 FOLDER_ADAPTER_REMOVED = "adapter_removed"
 FOLDER_AUNDANT_REMOVED = "abundant_removed"
 FOLDER_MIRNA_REMOVED = "miRNA_removed"
@@ -195,14 +195,17 @@ def get_folder_path_processed_species(species):
 def get_folder_path_processed_species_mapped(species):
     return os.path.join(get_folder_path_processed_species(species), FOLDER_MAPPED)
 
-def get_folder_path_processed_species_clusters(species):
-    return os.path.join(get_folder_path_processed_species(species), FOLDER_CLUSTERS)
+def get_folder_path_processed_species_clusters(species, cluster_set):
+    return os.path.join(get_folder_path_processed_species(species), cluster_set)
 
-def get_folder_path_processed_species_clusters_merged(species):
-    return os.path.join(get_folder_path_processed_species(species), FOLDER_CLUSTERS_MERGED)
+def get_folder_path_processed_species_clusters_protrac(species, cluster_set):
+    return os.path.join(get_folder_path_processed_species_clusters(species, cluster_set), FOLDER_CLUSTERS_PROTRAC)
 
-def get_folder_path_processed_species_clusters_analyzed(species):
-    return os.path.join(get_folder_path_processed_species(species), FOLDER_CLUSTERS_ANALYZED)
+def get_folder_path_processed_species_clusters_merged(species, cluster_set):
+    return os.path.join(get_folder_path_processed_species_clusters(species, cluster_set), FOLDER_CLUSTERS_MERGED)
+
+def get_folder_path_processed_species_clusters_analyzed(species, cluster_set):
+    return os.path.join(get_folder_path_processed_species_clusters(species, cluster_set), FOLDER_CLUSTERS_ANALYZED)
 
 def get_folder_path_processed_species_sRNA(species):
     return os.path.join(get_folder_path_processed_species(species), FOLDER_SRNA)
