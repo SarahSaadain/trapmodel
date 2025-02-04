@@ -72,18 +72,16 @@ remove multiple files with wildcard
 
 ```rm -v -r D*/clusters_*```  
 remove multiple folders with wildcard  
-
+  
 ```cp -r --parents D*/cluster* backup_SarahProtrac_LopikCluster/```  
 copy while maintining folder structure  
-
-<<<<<<< HEAD
+  
 ```sudo pmset -b sleep 0; sudo pmset -b disablesleep 1```  
 disable sleep while running simulations locally  
-
-```sudo pmset -b sleep 5; sudo pmset -b disablesleep 0````  
+  
+```sudo pmset -b sleep 5; sudo pmset -b disablesleep 0```  
 turn back to normal settings  
-=======
-#### Others:
-```du -sh */```
-list the folder size
->>>>>>> 21ca4be (updated scripts to handle different combinations for cluster analysis)
+  
+#### Others:  
+```du -sh */```  
+list the folder size  
